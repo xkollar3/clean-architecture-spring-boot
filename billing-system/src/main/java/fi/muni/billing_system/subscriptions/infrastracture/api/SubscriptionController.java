@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 import fi.muni.billing_system.subscriptions.usecase.cancelplan.CancelCustomerPlanUseCase;
 import fi.muni.billing_system.subscriptions.usecase.subscribetoplan.SubscribeToPlanUseCase;
 import fi.muni.billing_system.subscriptions.usecase.upgradeplan.UpgradePlanUseCase;
@@ -25,7 +27,7 @@ public class SubscriptionController {
   private final UpgradePlanUseCase upgradePlanUseCase;
 
   @PostMapping
-  public UUID subscribeToPlan(@RequestBody SubscribeToPlanDto request) {
+  public UUID subscribeToPlan(@Valid @RequestBody SubscribeToPlanDto request) {
     return subscribeToPlanUseCase.execute(request.customerId(), request.plan());
   }
 
@@ -35,7 +37,7 @@ public class SubscriptionController {
   }
 
   @PutMapping("/{planId}")
-  public void upgradePlan(@PathVariable("planId") UUID planId, @RequestBody UpgradePlanDto request) {
+  public void upgradePlan(@PathVariable("planId") UUID planId, @Valid @RequestBody UpgradePlanDto request) {
     upgradePlanUseCase.execute(planId, request.plan());
   }
 }

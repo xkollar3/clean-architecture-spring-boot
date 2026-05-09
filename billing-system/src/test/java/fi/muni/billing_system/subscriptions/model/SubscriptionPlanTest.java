@@ -27,8 +27,6 @@ class SubscriptionPlanTest {
     assertThat(plan.getCancelledAt()).isNull();
   }
 
-  // --- cancelPlan ---
-
   @Test
   void cancelPlan_setsTimestamp() {
     var plan = new SubscriptionPlan(CUSTOMER_ID, Plan.MAX_TIER);
@@ -49,8 +47,6 @@ class SubscriptionPlanTest {
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("already cancelled");
   }
-
-  // --- upgradePlan ---
 
   @Test
   void upgradePlan_changesPlanAndResetsBillingPeriod() {
@@ -81,8 +77,6 @@ class SubscriptionPlanTest {
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("cancelled");
   }
-
-  // --- renewSubscription ---
 
   @Test
   void renewSubscription_resetsBillingPeriod() {
