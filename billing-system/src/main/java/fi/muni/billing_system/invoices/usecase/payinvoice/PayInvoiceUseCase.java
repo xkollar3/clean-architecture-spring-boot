@@ -13,17 +13,18 @@ import lombok.RequiredArgsConstructor;
 public class PayInvoiceUseCase {
 
   private final PayInvoicePort payInvoicePort;
+  private final PaymentGatewayPort paymentGatewayPort;
 
-  public UUID execute(UUID invoiceId) {
-    var optInvoice = payInvoicePort.getInvoice(invoiceId);
-    if (optInvoice.isEmpty()) {
-      throw new IllegalStateException("Cannot pay invoice: " + invoiceId + " because it does not exist.");
-    }
+  public void execute(UUID invoiceId) {
+    var invoice = payInvoicePort.getInvoice(invoiceId)
+        .orElseThrow(
+            () -> new IllegalStateException("Cannot pay invoice: " + invoiceId + " because it does not exist."));
 
-    var result = payInvoicePort.payInvoice(invoiceId);
+    var paymentIntentId = paymentGatewayPort.createPaymentIntent(invoice.getStripeCustomerId(), invoice.getId(),
+        invoice.getAmount());
 
-    optInvoice.get().payInvoice(result.paymentId());
+    invoice.payInvoice(paymentIntentId);
 
-    return payInvoicePort.save(optInvoice.get()).getId();
+    payInvoicePort.save(invoice);
   }
 }

@@ -9,10 +9,5 @@ public interface PayInvoicePort {
 
   public Optional<Invoice> getInvoice(UUID invoiceId);
 
-  public PayInvoiceResult payInvoice(UUID invoiceId);
-
   public Invoice save(Invoice invoice);
-
-  public static record PayInvoiceResult(String paymentId) {
-  }
 }

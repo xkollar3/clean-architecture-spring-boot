@@ -2,28 +2,33 @@ package fi.muni.billing_system.invoices.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class Invoice {
 
   private final UUID id;
 
   private final UUID customerId;
+  private final String stripeCustomerId;
   private final UUID subscriptionId;
 
   private final BigDecimal amount;
 
   private final Instant issuedAt;
-  private final Instant billingDate;
+  private final LocalDate billingDate;
 
   private String paymentId;
 
-  public Invoice(UUID customerId, UUID subscriptionId, BigDecimal amount, Instant billingDate) {
+  public Invoice(UUID customerId, String stripeCustomerId, UUID subscriptionId, BigDecimal amount, LocalDate billingDate) {
     this.id = UUID.randomUUID();
     this.customerId = customerId;
+    this.stripeCustomerId = stripeCustomerId;
     this.subscriptionId = subscriptionId;
     this.issuedAt = Instant.now();
     this.amount = amount;
@@ -31,7 +36,7 @@ public class Invoice {
   }
 
   public void payInvoice(String paymentId) {
-    if (paymentId != null) {
+    if (this.paymentId != null) {
       throw new IllegalStateException("Invoice has already been paid");
     }
 
