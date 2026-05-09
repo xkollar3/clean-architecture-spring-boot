@@ -1,12 +1,15 @@
 package fi.muni.billing_system.subscriptions.model;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class SubscriptionPlan {
 
   private final Long periodDays = 30l;
@@ -17,8 +20,8 @@ public class SubscriptionPlan {
   private Plan plan;
 
   private final Instant subscribedAt;
-  private Instant nextBillingDate;
-  private Instant currentPeriodEnd;
+  private LocalDate nextBillingDate;
+  private LocalDate currentPeriodEnd;
 
   private Instant cancelledAt;
 
@@ -27,8 +30,8 @@ public class SubscriptionPlan {
     this.customerId = customerId;
     this.plan = plan;
     this.subscribedAt = Instant.now();
-    this.nextBillingDate = subscribedAt;
-    this.currentPeriodEnd = this.subscribedAt.plus(periodDays, ChronoUnit.DAYS);
+    this.nextBillingDate = LocalDate.now();
+    this.currentPeriodEnd = LocalDate.now().plus(periodDays, ChronoUnit.DAYS);
   }
 
   public void cancelPlan() {
@@ -37,7 +40,6 @@ public class SubscriptionPlan {
     }
 
     this.cancelledAt = Instant.now();
-    this.nextBillingDate = null;
   }
 
   public void upgradePlan(Plan plan) {
@@ -50,7 +52,16 @@ public class SubscriptionPlan {
     }
 
     this.plan = plan;
-    this.nextBillingDate = Instant.now();
-    this.currentPeriodEnd = this.subscribedAt.plus(periodDays, ChronoUnit.DAYS);
+    this.nextBillingDate = LocalDate.now();
+    this.currentPeriodEnd = LocalDate.now().plus(periodDays, ChronoUnit.DAYS);
+  }
+
+  public void renewSubscription() {
+    if (this.getCancelledAt() != null) {
+      throw new IllegalStateException("Plan with id: " + id + " is already cancelled.");
+    }
+
+    this.nextBillingDate = LocalDate.now();
+    this.currentPeriodEnd = LocalDate.now().plus(periodDays, ChronoUnit.DAYS);
   }
 }
