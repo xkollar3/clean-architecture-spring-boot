@@ -1,0 +1,35 @@
+name: Billing System CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'billing-system/**'
+      - '.github/workflows/billing-system.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'billing-system/**'
+      - '.github/workflows/billing-system.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: billing-system
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+          cache-dependency-path: billing-system/pom.xml
+
+      - name: Build and test
+        run: ./mvnw verify
