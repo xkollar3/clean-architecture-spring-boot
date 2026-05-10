@@ -5,10 +5,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.muni.billing_system.invoices.usecase.issueinvoice.StripeCustomerPort;
+import fi.muni.billing_system.invoices.usecase.issueinvoice.GetCustomerPort;
 
 @Component
-public class StripeCustomerAdapter implements StripeCustomerPort {
+public class StripeCustomerAdapter implements GetCustomerPort {
 
   private final String stripeCustomerId;
 

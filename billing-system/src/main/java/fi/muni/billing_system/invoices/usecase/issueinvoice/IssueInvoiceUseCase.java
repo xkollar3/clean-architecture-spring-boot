@@ -17,7 +17,7 @@ public class IssueInvoiceUseCase {
 
   private final IssueInvoicePort issueInvoicePort;
 
-  private final StripeCustomerPort stripeCustomerPort;
+  private final GetCustomerPort stripeCustomerPort;
 
   public UUID execute(UUID subscriptionPlanId, UUID customerId, LocalDate billingDate, BigDecimal amount) {
     if (issueInvoicePort.isAlreadyIssued(subscriptionPlanId, customerId, billingDate)) {

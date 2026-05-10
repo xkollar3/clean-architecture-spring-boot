@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import fi.muni.billing_system.invoices.model.Invoice;
 import fi.muni.billing_system.invoices.usecase.issueinvoice.IssueInvoicePort;
 import fi.muni.billing_system.invoices.usecase.issueinvoice.IssueInvoiceUseCase;
-import fi.muni.billing_system.invoices.usecase.issueinvoice.StripeCustomerPort;
+import fi.muni.billing_system.invoices.usecase.issueinvoice.GetCustomerPort;
 
 @ExtendWith(MockitoExtension.class)
 class IssueInvoiceUseCaseTest {
@@ -30,7 +30,7 @@ class IssueInvoiceUseCaseTest {
   private IssueInvoicePort port;
 
   @Mock
-  private StripeCustomerPort stripeCustomerPort;
+  private GetCustomerPort stripeCustomerPort;
 
   @InjectMocks
   private IssueInvoiceUseCase useCase;
