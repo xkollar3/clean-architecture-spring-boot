@@ -1,4 +1,4 @@
-package fi.muni.billing_system.invoices.infrastracture.adapters;
+package fi.muni.billing_system.invoices.infrastracture.persistence;
 
 import java.math.BigDecimal;
 import java.time.Instant;

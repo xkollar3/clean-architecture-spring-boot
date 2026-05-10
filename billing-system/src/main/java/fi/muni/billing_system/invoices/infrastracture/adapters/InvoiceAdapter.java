@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
+import fi.muni.billing_system.invoices.infrastracture.persistence.InvoiceEntity;
+import fi.muni.billing_system.invoices.infrastracture.persistence.InvoiceRepository;
 import fi.muni.billing_system.invoices.model.Invoice;
 import fi.muni.billing_system.invoices.usecase.issueinvoice.IssueInvoicePort;
 import fi.muni.billing_system.invoices.usecase.payinvoice.PayInvoicePort;

@@ -21,12 +21,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import fi.muni.billing_system.invoices.model.Invoice;
 import fi.muni.billing_system.invoices.usecase.issueinvoice.IssueInvoicePort;
 import fi.muni.billing_system.invoices.usecase.issueinvoice.IssueInvoiceUseCase;
+import fi.muni.billing_system.invoices.usecase.issueinvoice.StripeCustomerPort;
 
 @ExtendWith(MockitoExtension.class)
 class IssueInvoiceUseCaseTest {
 
   @Mock
   private IssueInvoicePort port;
+
+  @Mock
+  private StripeCustomerPort stripeCustomerPort;
 
   @InjectMocks
   private IssueInvoiceUseCase useCase;
@@ -40,9 +44,10 @@ class IssueInvoiceUseCaseTest {
   @Test
   void execute_createsInvoiceAndReturnsId() {
     when(port.isAlreadyIssued(SUBSCRIPTION_ID, CUSTOMER_ID, BILLING_DATE)).thenReturn(false);
+    when(stripeCustomerPort.getStripeCustomerIdPort(CUSTOMER_ID)).thenReturn(STRIPE_CUSTOMER_ID);
     when(port.save(any(Invoice.class))).thenAnswer(inv -> inv.getArgument(0));
 
-    UUID result = useCase.execute(SUBSCRIPTION_ID, CUSTOMER_ID, STRIPE_CUSTOMER_ID, BILLING_DATE, AMOUNT);
+    UUID result = useCase.execute(SUBSCRIPTION_ID, CUSTOMER_ID, BILLING_DATE, AMOUNT);
 
     assertThat(result).isNotNull();
 
@@ -58,7 +63,7 @@ class IssueInvoiceUseCaseTest {
   void execute_alreadyIssued_throws() {
     when(port.isAlreadyIssued(SUBSCRIPTION_ID, CUSTOMER_ID, BILLING_DATE)).thenReturn(true);
 
-    assertThatThrownBy(() -> useCase.execute(SUBSCRIPTION_ID, CUSTOMER_ID, STRIPE_CUSTOMER_ID, BILLING_DATE, AMOUNT))
+    assertThatThrownBy(() -> useCase.execute(SUBSCRIPTION_ID, CUSTOMER_ID, BILLING_DATE, AMOUNT))
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("already been issued");
 

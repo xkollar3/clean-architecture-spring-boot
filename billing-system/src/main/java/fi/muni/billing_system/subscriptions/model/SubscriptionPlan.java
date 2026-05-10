@@ -5,12 +5,14 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SubscriptionPlan {
+public class SubscriptionPlan extends AbstractAggregateRoot<SubscriptionPlan> {
 
   private final Long periodDays = 30l;
 
@@ -32,6 +34,8 @@ public class SubscriptionPlan {
     this.subscribedAt = Instant.now();
     this.nextBillingDate = LocalDate.now();
     this.currentPeriodEnd = LocalDate.now().plus(periodDays, ChronoUnit.DAYS);
+
+    registerEvent(new SubscribedToPlan(id, customerId, this.nextBillingDate, plan.getPlanPriceEur()));
   }
 
   public void cancelPlan() {
@@ -40,6 +44,8 @@ public class SubscriptionPlan {
     }
 
     this.cancelledAt = Instant.now();
+
+    registerEvent(new PlanCancelled(id));
   }
 
   public void upgradePlan(Plan plan) {
@@ -54,6 +60,8 @@ public class SubscriptionPlan {
     this.plan = plan;
     this.nextBillingDate = LocalDate.now();
     this.currentPeriodEnd = LocalDate.now().plus(periodDays, ChronoUnit.DAYS);
+
+    registerEvent(new PlanUpgraded(id, customerId, this.nextBillingDate, plan.getPlanPriceEur()));
   }
 
   public void renewSubscription() {
@@ -63,5 +71,7 @@ public class SubscriptionPlan {
 
     this.nextBillingDate = LocalDate.now();
     this.currentPeriodEnd = LocalDate.now().plus(periodDays, ChronoUnit.DAYS);
+
+    registerEvent(new PlanRenewed(id, customerId, this.nextBillingDate, plan.getPlanPriceEur()));
   }
 }

@@ -36,7 +36,7 @@ public class StripePaymentAdapter implements PaymentGatewayPort {
           .putMetadata("invoice_id", invoiceId.toString())
           .build();
 
-      PaymentIntent paymentIntent = stripeClient.paymentIntents().create(params);
+      PaymentIntent paymentIntent = stripeClient.v1().paymentIntents().create(params);
       return paymentIntent.getId();
     } catch (StripeException e) {
       throw new RuntimeException("Failed to create payment intent for invoice: " + invoiceId, e);
