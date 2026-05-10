@@ -15,6 +15,13 @@
 - Layers can be violated increasing effort vastly for testing
 - Use cases become invisible in code, domain services tend to have many responsibilities
 
+## Billing module
+- Demo showcase is done on a billing module working with subscription model
+- Customers can subscribe to plans and are automatically invoiced each time the plan renews
+
+## Architecture Diagram
+![Architecture Diagram](assets/diagram.png)
+
 ## Inspired by the following talks
-- https://www.youtube.com/watch?v=VGhg6Tfxb60&t=2871s - Implementing Domain Driven Design with Spring by Maciej Walkowiak @ Spring I/O 2024 
+- https://www.youtube.com/watch?v=VGhg6Tfxb60&t=2871s - Implementing Domain Driven Design with Spring by Maciej Walkowiak @ Spring I/O 2024
 - https://www.youtube.com/watch?v=cPH5AiqLQTo - Clean Architecture with Spring by Tom Hombergs @ Spring I/O 2019
