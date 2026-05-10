@@ -18,6 +18,8 @@ public class StripePaymentAdapter implements PaymentGatewayPort {
 
   private final StripeClient stripeClient;
 
+  private final static String CURRENCY_EUR = "eur";
+
   public StripePaymentAdapter(@Value("${stripe.api-key}") String apiKey) {
     this.stripeClient = new StripeClient(apiKey);
   }
@@ -28,7 +30,7 @@ public class StripePaymentAdapter implements PaymentGatewayPort {
       var params = PaymentIntentCreateParams.builder()
           .setCustomer(stripeCustomerId)
           .setAmount(amount.multiply(BigDecimal.valueOf(100)).longValue())
-          .setCurrency("usd")
+          .setCurrency(CURRENCY_EUR)
           .setAutomaticPaymentMethods(
               PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                   .setEnabled(true)

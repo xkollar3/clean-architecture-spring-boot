@@ -3,6 +3,7 @@ package fi.muni.billing_system.subscriptions.infrastracture.adapters;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Repository;
 
 import fi.muni.billing_system.subscriptions.model.Plan;
@@ -19,6 +20,7 @@ public class SubscriptionPlanAdapter
     implements CancelCustomerPlanPort, RenewSubscriptionPort, SubscribeToPlanPort, UpgradePlanPort {
 
   private final SubscriptionPlanRepository repository;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Override
   public Optional<SubscriptionPlan> getSubscription(UUID id) {
@@ -28,8 +30,12 @@ public class SubscriptionPlanAdapter
   @Override
   public SubscriptionPlan save(SubscriptionPlan subscription) {
     SubscriptionPlanEntity entity = SubscriptionPlanEntity.fromDomain(subscription);
-    SubscriptionPlanEntity saved = repository.save(entity);
-    return saved.toDomain();
+    repository.save(entity);
+
+    subscription.getDomainEvents().forEach(eventPublisher::publishEvent);
+    subscription.clearDomainEvents();
+
+    return subscription;
   }
 
   @Override

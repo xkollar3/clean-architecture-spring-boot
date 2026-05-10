@@ -28,6 +28,20 @@ class SubscriptionPlanTest {
   }
 
   @Test
+  void createSubscription_registersSubscribedToPlanEvent() {
+    var plan = new SubscriptionPlan(CUSTOMER_ID, Plan.PLUS_TIER);
+
+    assertThat(plan.getDomainEvents()).hasSize(1);
+    assertThat(plan.getDomainEvents().get(0)).isInstanceOf(SubscribedToPlan.class);
+
+    var event = (SubscribedToPlan) plan.getDomainEvents().get(0);
+    assertThat(event.id()).isEqualTo(plan.getId());
+    assertThat(event.customerId()).isEqualTo(CUSTOMER_ID);
+    assertThat(event.billingDate()).isEqualTo(LocalDate.now());
+    assertThat(event.planPriceEur()).isEqualTo(Plan.PLUS_TIER.getPlanPriceEur());
+  }
+
+  @Test
   void cancelPlan_setsTimestamp() {
     var plan = new SubscriptionPlan(CUSTOMER_ID, Plan.MAX_TIER);
     Instant before = Instant.now();
@@ -36,6 +50,20 @@ class SubscriptionPlanTest {
 
     assertThat(plan.getCancelledAt()).isNotNull();
     assertThat(plan.getCancelledAt()).isBetween(before, Instant.now());
+  }
+
+  @Test
+  void cancelPlan_registersPlanCancelledEvent() {
+    var plan = new SubscriptionPlan(CUSTOMER_ID, Plan.MAX_TIER);
+    plan.clearDomainEvents();
+
+    plan.cancelPlan();
+
+    assertThat(plan.getDomainEvents()).hasSize(1);
+    assertThat(plan.getDomainEvents().get(0)).isInstanceOf(PlanCancelled.class);
+
+    var event = (PlanCancelled) plan.getDomainEvents().get(0);
+    assertThat(event.id()).isEqualTo(plan.getId());
   }
 
   @Test
@@ -57,6 +85,23 @@ class SubscriptionPlanTest {
     assertThat(plan.getPlan()).isEqualTo(Plan.MAX_TIER);
     assertThat(plan.getNextBillingDate()).isEqualTo(LocalDate.now());
     assertThat(plan.getCurrentPeriodEnd()).isEqualTo(LocalDate.now().plus(30, ChronoUnit.DAYS));
+  }
+
+  @Test
+  void upgradePlan_registersPlanUpgradedEvent() {
+    var plan = new SubscriptionPlan(CUSTOMER_ID, Plan.PLUS_TIER);
+    plan.clearDomainEvents();
+
+    plan.upgradePlan(Plan.MAX_TIER);
+
+    assertThat(plan.getDomainEvents()).hasSize(1);
+    assertThat(plan.getDomainEvents().get(0)).isInstanceOf(PlanUpgraded.class);
+
+    var event = (PlanUpgraded) plan.getDomainEvents().get(0);
+    assertThat(event.id()).isEqualTo(plan.getId());
+    assertThat(event.customerId()).isEqualTo(CUSTOMER_ID);
+    assertThat(event.billingDate()).isEqualTo(LocalDate.now());
+    assertThat(event.planPriceEur()).isEqualTo(Plan.MAX_TIER.getPlanPriceEur());
   }
 
   @Test
@@ -86,6 +131,33 @@ class SubscriptionPlanTest {
 
     assertThat(subscription.getNextBillingDate()).isEqualTo(LocalDate.now());
     assertThat(subscription.getCurrentPeriodEnd()).isEqualTo(LocalDate.now().plus(30, ChronoUnit.DAYS));
+  }
+
+  @Test
+  void renewSubscription_registersPlanRenewedEvent() {
+    var subscription = new SubscriptionPlan(CUSTOMER_ID, Plan.HARDCORE_MAX_TIER);
+    subscription.clearDomainEvents();
+
+    subscription.renewSubscription();
+
+    assertThat(subscription.getDomainEvents()).hasSize(1);
+    assertThat(subscription.getDomainEvents().get(0)).isInstanceOf(PlanRenewed.class);
+
+    var event = (PlanRenewed) subscription.getDomainEvents().get(0);
+    assertThat(event.id()).isEqualTo(subscription.getId());
+    assertThat(event.customerId()).isEqualTo(CUSTOMER_ID);
+    assertThat(event.billingDate()).isEqualTo(LocalDate.now());
+    assertThat(event.planPriceEur()).isEqualTo(Plan.HARDCORE_MAX_TIER.getPlanPriceEur());
+  }
+
+  @Test
+  void clearDomainEvents_removesAllEvents() {
+    var plan = new SubscriptionPlan(CUSTOMER_ID, Plan.PLUS_TIER);
+    assertThat(plan.getDomainEvents()).isNotEmpty();
+
+    plan.clearDomainEvents();
+
+    assertThat(plan.getDomainEvents()).isEmpty();
   }
 
   @Test

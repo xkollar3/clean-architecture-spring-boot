@@ -5,14 +5,13 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
-import org.springframework.data.domain.AbstractAggregateRoot;
-
+import fi.muni.billing_system.AggregateRoot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SubscriptionPlan extends AbstractAggregateRoot<SubscriptionPlan> {
+public class SubscriptionPlan extends AggregateRoot {
 
   private final Long periodDays = 30l;
 
