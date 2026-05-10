@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpServerErrorException;
@@ -180,5 +182,41 @@ class InvoiceE2eTest {
     } catch (HttpServerErrorException e) {
       assertThat(e.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(500));
     }
+  }
+
+  @Test
+  void viewInvoices_returnsInvoicesForCustomer() {
+    var customerId = UUID.randomUUID();
+    var billingDate = LocalDate.now();
+    var amount1 = new BigDecimal("30.00");
+    var amount2 = new BigDecimal("50.00");
+
+    eventPublisher.publishEvent(new SubscribedToPlan(customerId, customerId, billingDate, amount1));
+    eventPublisher.publishEvent(new PlanRenewed(customerId, customerId, billingDate.plusMonths(1), amount2));
+
+    var invoices = restClient().get()
+        .uri("/{customerId}", customerId)
+        .retrieve()
+        .body(new ParameterizedTypeReference<List<java.util.Map<String, Object>>>() {
+        });
+
+    assertThat(invoices).hasSize(2);
+    assertThat(invoices).extracting(m -> new BigDecimal(m.get("amount").toString()))
+        .usingElementComparator(BigDecimal::compareTo)
+        .containsExactlyInAnyOrder(amount1, amount2);
+    assertThat(invoices).allSatisfy(m -> assertThat(m.get("customerId")).isEqualTo(customerId.toString()));
+  }
+
+  @Test
+  void viewInvoices_noInvoices_returnsEmptyList() {
+    var customerId = UUID.randomUUID();
+
+    var invoices = restClient().get()
+        .uri("/{customerId}", customerId)
+        .retrieve()
+        .body(new ParameterizedTypeReference<List<java.util.Map<String, Object>>>() {
+        });
+
+    assertThat(invoices).isEmpty();
   }
 }

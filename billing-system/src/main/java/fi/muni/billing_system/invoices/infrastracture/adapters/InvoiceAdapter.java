@@ -1,6 +1,7 @@
 package fi.muni.billing_system.invoices.infrastracture.adapters;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,11 +12,12 @@ import fi.muni.billing_system.invoices.infrastracture.persistence.InvoiceReposit
 import fi.muni.billing_system.invoices.model.Invoice;
 import fi.muni.billing_system.invoices.usecase.issueinvoice.IssueInvoicePort;
 import fi.muni.billing_system.invoices.usecase.payinvoice.PayInvoicePort;
+import fi.muni.billing_system.invoices.usecase.viewinvoices.ViewInvoicesPort;
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class InvoiceAdapter implements IssueInvoicePort, PayInvoicePort {
+public class InvoiceAdapter implements IssueInvoicePort, PayInvoicePort, ViewInvoicesPort {
 
   private final InvoiceRepository repository;
 
@@ -34,5 +36,10 @@ public class InvoiceAdapter implements IssueInvoicePort, PayInvoicePort {
   @Override
   public Optional<Invoice> getInvoice(UUID invoiceId) {
     return repository.findById(invoiceId).map(InvoiceEntity::toDomain);
+  }
+
+  @Override
+  public List<Invoice> getInvoices(UUID customerId) {
+    return repository.findAllByCustomerId(customerId).stream().map(InvoiceEntity::toDomain).toList();
   }
 }

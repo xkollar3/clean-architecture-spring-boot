@@ -22,20 +22,20 @@ public class SubscriptionBillingEventHandler {
   public void handle(SubscribedToPlan event) {
     log.info("Invoicing new subscription: {}", event.id());
 
-    issueInvoiceUseCase.execute(event.id(), event.id(), event.billingDate(), event.planPriceEur());
+    issueInvoiceUseCase.execute(event.id(), event.customerId(), event.billingDate(), event.planPriceEur());
   }
 
   @EventListener
   public void handle(PlanRenewed event) {
     log.info("Invoicing renewed subscription: {}", event.id());
 
-    issueInvoiceUseCase.execute(event.id(), event.id(), event.billingDate(), event.planPriceEur());
+    issueInvoiceUseCase.execute(event.id(), event.customerId(), event.billingDate(), event.planPriceEur());
   }
 
   @EventListener
   public void handle(PlanUpgraded event) {
     log.info("Invoicing upgraded subscription: {}", event.id());
 
-    issueInvoiceUseCase.execute(event.id(), event.id(), event.billingDate(), event.planPriceEur());
+    issueInvoiceUseCase.execute(event.id(), event.customerId(), event.billingDate(), event.planPriceEur());
   }
 }
