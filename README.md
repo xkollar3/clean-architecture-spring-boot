@@ -11,9 +11,23 @@
 - Easy transition from Modular Monolith to Microservices using Spring Modulith
 
 ## Layered architecture
+- Architecture that organizes code into layers
+- Layers are chosen depending on technical responsibilties for example: Api, Facade, Service, Repository
+- Layered architecture works very well in some scenarios most devs know it since its widely popular
+- Layered architecture is easy to test
 - Often corrupted by database driven design, services don't focus on domain logic but on how to utilize the database
 - Layers can be violated increasing effort vastly for testing
 - Use cases become invisible in code, domain services tend to have many responsibilities
+
+## Clean architecture
+- Architecture aims to separate out business logic
+- Applications are split into different rings where dependencies flow inward to entities
+- Inner most entity layer contains purely domain models and business logic
+- Use case layer orchestrates entities
+- Dependency inversion is used when communicating with layers above, preventing dependency on specific infrastructure
+- Clean architecture can be pragmatically combined with vertical slice architecture, this way only entity core is shared among features
+- Otherwise implementation of different features is separated
+- Code may be shared among slices pragmatically where it makes sense
 
 ## Billing module
 - Demo showcase is done on a billing module working with subscription model
