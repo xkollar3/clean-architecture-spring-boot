@@ -29,12 +29,19 @@
 - Otherwise implementation of different features is separated
 - Code may be shared among slices pragmatically where it makes sense
 
+## Architecture Diagram - Clean vs VSA
+![Architecture Diagram](assets/clean.jpg)
+
+
+## Architecture Diagram - VSA combined with clean
+![Architecture Diagram](assets/clean_with_vsa.png)
+
+## Architecture Diagram - Ports and Adapters for DI
+![Architecture Diagram](assets/diagram.png)
+
 ## Billing module
 - Demo showcase is done on a billing module working with subscription model
 - Customers can subscribe to plans and are automatically invoiced each time the plan renews
-
-## Architecture Diagram
-![Architecture Diagram](assets/diagram.png)
 
 ## Inspired by the following talks
 - https://www.youtube.com/watch?v=VGhg6Tfxb60&t=2871s - Implementing Domain Driven Design with Spring by Maciej Walkowiak @ Spring I/O 2024
